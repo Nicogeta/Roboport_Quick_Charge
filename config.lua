@@ -24,5 +24,5 @@ roboport_auto_replace_method = "both"
 --                   have their recipe changed to the latest available version.
 --     false:        You will have to update/set your assembling machines manually
 --                   to the newest Roboport Upgrade recipe.
-roboport_recipe_update = false
+roboport_recipe_update = true
 --------------------------------------------------------------------------------------------
