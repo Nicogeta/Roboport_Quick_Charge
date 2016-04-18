@@ -36,18 +36,20 @@ remote.add_interface("roboport_quick_charge", {
 			end
 			--Revert to old assembling machine recipes
 			for _, entity in ipairs(surface.find_entities_filtered({area={{c.x * 32, c.y * 32}, {c.x * 32 + 32, c.y * 32 + 32}}, type="assembling-machine"})) do
-				if string.sub(entity.recipe.name, 1, 19) == "qc-roboport-upgrade" or string.sub(entity.recipe.name, 1, 20) == "qcm-roboport-upgrade" then
-					local upgrade = ""
-					if string.sub(entity.recipe.name, 1, 19) == "qc-roboport-upgrade" then
-						upgrade = string.sub(entity.recipe.name, 21, -1)
-					else
-						upgrade = string.sub(entity.recipe.name, 22, -1)
-					end
-					local itemcount = entity.get_output_inventory().get_item_count("qc-roboport-upgrade-" .. upgrade)
-					entity.recipe=game.players[1].force.recipes["roboport"]
-					if itemcount > 0 then
-						entity.get_output_inventory().clear()
-						entity.get_output_inventory().insert({name="roboport", count=itemcount})
+				if entity.recipe then
+					if string.sub(entity.recipe.name, 1, 19) == "qc-roboport-upgrade" or string.sub(entity.recipe.name, 1, 20) == "qcm-roboport-upgrade" then
+						local upgrade = ""
+						if string.sub(entity.recipe.name, 1, 19) == "qc-roboport-upgrade" then
+							upgrade = string.sub(entity.recipe.name, 21, -1)
+						else
+							upgrade = string.sub(entity.recipe.name, 22, -1)
+						end
+						local itemcount = entity.get_output_inventory().get_item_count("qc-roboport-upgrade-" .. upgrade)
+						entity.recipe=game.players[1].force.recipes["roboport"]
+						if itemcount > 0 then
+							entity.get_output_inventory().clear()
+							entity.get_output_inventory().insert({name="roboport", count=itemcount})
+						end
 					end
 				end
 			end
@@ -110,7 +112,7 @@ function upgradeRoboports(upgrade)
 	for c in surface.get_chunks() do
 		--replace all roboports preserving contents
 		if roboport_auto_replace_method == "both" or roboport_auto_replace_method == "onresearch" then
-			for _, entity in ipairs(surface.find_entities_filtered({area={{c.x * 32, c.y * 32}, {c.x * 32 + 32, c.y * 32 + 32}}, name=itemList[upgrade+0]})) do
+			for _, entity in ipairs(surface.find_entities_filtered({area={{c.x * 32, c.y * 32}, {c.x * 32 + 32, c.y * 32 + 32}}, type="roboport"})) do
 				local pos = entity.position
 				local countC = entity.get_inventory(1).get_item_count("construction-robot")
 				local countL = entity.get_inventory(1).get_item_count("logistic-robot")
@@ -133,12 +135,14 @@ function upgradeRoboports(upgrade)
 		--change any roboport assembling machines to have upgraded recipe and convert any old roboports in the output slot to new ones
 		if roboport_recipe_update then
 			for _, entity in ipairs(surface.find_entities_filtered({area={{c.x * 32, c.y * 32}, {c.x * 32 + 32, c.y * 32 + 32}}, type="assembling-machine"})) do
-				if entity.recipe.name == recipeList[upgrade+0] then
-					local itemcount = entity.get_output_inventory().get_item_count(itemList[upgrade+0])
-					entity.recipe=game.players[1].force.recipes[recipeList[upgrade+1]]
-					if itemcount > 0 then
-						entity.get_output_inventory().clear()
-						entity.get_output_inventory().insert({name=itemList[upgrade+1], count=itemcount})
+				if entity.recipe then
+					if entity.recipe.name == "roboport" or string.sub(entity.recipe.name, 1, 20) == "qcm-roboport-upgrade" then
+						local itemcount = entity.get_output_inventory().get_item_count(itemList[upgrade+0])
+						entity.recipe=game.players[1].force.recipes[recipeList[upgrade+1]]
+						if itemcount > 0 then
+							entity.get_output_inventory().clear()
+							entity.get_output_inventory().insert({name=itemList[upgrade+1], count=itemcount})
+						end
 					end
 				end
 			end
