@@ -1,3 +1,3 @@
 # Roboport Quick Charge
 
-Upgrades the default Roboport with additional robot charging slots and more charge capacity and increases the crafting requirements for some balance.
+Upgrades the default Roboport with additional robot charging slots and more charge capacity unlocked through incremental research.
